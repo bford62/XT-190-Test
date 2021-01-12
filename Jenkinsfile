@@ -17,3 +17,4 @@ node() {
        println "There are some failing tests."
    }
  }
+ }
