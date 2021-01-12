@@ -21,7 +21,7 @@ node() {
         }
         stage ('Do Something') {
             echo "\n\n\n DO SOMETHING HERE"
-            ls -CDLtr
+            sh "ls -CDLtr"
         }
         stage ('Cucumber Reports') {
             cucumber buildStatus: "UNSTABLE",
