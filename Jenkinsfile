@@ -1,20 +1,7 @@
 node() {
-    def STC_INSTALL = "/opt/STC_CLIENT/Spirent_TestCenter_5.16/Spirent_TestCenter_Application_Linux64Client/"
     def os = System.properties['os.name'].toLowerCase()
     try {
         notifyBuild('STARTED')
-        def passthruString = sh(script: "printenv", returnStdout: true)
-        passthruString = passthruString.replaceAll('\n',' ')
-        def paramsString1 = params.toString().replaceAll("[\\[\\](){}]","")
-        paramsString = paramsString1.replaceAll(', ',' ')
-        def paramsStringXray = formatXray(paramsString1, ', ')
-        def HUDSON_URL = "${env.HUDSON_URL}"
-        def SERVER_JENKINS = ""
-        if (HUDSON_URL.contains("10.88.48.21")) {
-            SERVER_JENKINS = "WOPR-SB"
-        } else {
-            SERVER_JENKINS = "WOPR-PROD-JENKINS"
-        }       
         stage("Prepare Workspace") {
             echo "*** Prepare Workspace ***"
             cleanWs()
@@ -31,43 +18,6 @@ node() {
             def branches = scm.branches[0].name
             def branch2 = branches.split("/")[1]
             git branch: branch2, url: repoURL
-            echo " ** REPO SHARED LIBRARIES FOR ALL GIT-ARC PROJECTS ** "
-            sh """
-                mkdir lib
-                cd lib/
-                git clone ${GIT_SHARED_LIB}
-                cd ..
-                ls -l
-            """
-            echo "\n\n\n"
-        }
-        stage("Get Gsheet Credentials") {
-           def User_Pass_Json = sh(script: "python3 ./src/gsheet_get_Architecture_Login_pwd.py", returnStdout: true).trim()
-           // User_Pass_Json = User_Pass_Json.replaceAll("\'", '"')
-           env.User_Pass_Json = User_Pass_Json
-           // echo "\n\n\n env.User_Pass_Json = ${env.User_Pass_Json}\n\n\n"
-        }
-        stage("AWX Runner") {
-            def awx_output = sh(script: "python3 ${orchPy} ${paramsString}", returnStdout: true)
-            env.awx_output_xray = formatXray(awx_output, '\n')
-            echo "${awx_output}"
-        }
-        stage("BDD-Behave") {
-            echo "\n\n\n*** BDD-Behave-Python3 on ${SERVER_JENKINS} ***"
-            // sh "/var/lib/jenkins/.pyenv/shims/behave -v"
-            // echo "\n\n\n"
-            try {
-                sh """
-                    export SERVER_JENKINS=${SERVER_JENKINS}
-                    export STC_PRIVATE_INSTALL_DIR=${STC_INSTALL}
-                    /var/lib/jenkins/.pyenv/shims/behave -f cucumber -o reports/cucumber.json --junit
-                """
-            } catch (error) {
-                echo "\n\n\n FAILURE FOUND -- CONTINUING TO XRAY-IMPORT \n\n\n"
-            } finally {
-                echo "*** JUNIT ***"
-                junit skipPublishingChecks: true, allowEmptyResults: true, keepLongStdio: true, testResults: 'reports/*.xml'
-            } 
         }
         stage ('Cucumber Reports') {
             cucumber buildStatus: "UNSTABLE",
