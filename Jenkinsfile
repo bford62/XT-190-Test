@@ -19,6 +19,10 @@ node() {
             def branch2 = branches.split("/")[1]
             git branch: branch2, url: repoURL
         }
+        stage ("Do Something') {
+            echo "\n\n\n DO SOMETHING HERE"
+            ls -CDLtr
+        }
         stage ('Cucumber Reports') {
             cucumber buildStatus: "UNSTABLE",
             fileIncludePattern: "**/cucumber.json",
