@@ -74,6 +74,7 @@ node() {
             fileIncludePattern: "**/cucumber.json",
             jsonReportDirectory: 'reports'
         }
+    }
     catch(e) {                           
         // If there was an exception thrown, the build failed
         currentBuild.result = "FAILED"
@@ -82,7 +83,7 @@ node() {
         // Success or failure, always send notifications
         echo "I AM HERE"
         notifyBuild(currentBuild.result)
-		jiraSendBuildInfo site: 'YOUR-ORGINIZATION.atlassian.net'
+		jiraSendBuildInfo site: 'wowinc.atlassian.net'
     }
 }
 def notifyBuild(String buildStatus = 'STARTED') {
