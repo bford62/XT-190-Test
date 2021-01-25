@@ -37,7 +37,16 @@ node() {
         // Success or failure, always send notifications
         echo "I AM HERE"
         notifyBuild(currentBuild.result)
-		jiraSendBuildInfo site: 'wowinc.atlassian.net'
+		// jiraSendBuildInfo site: 'wowinc.atlassian.net'
+		node {
+            wrap([$class: 'hudson.plugins.jira.JiraCreateReleaseNotes', jiraProjectKey: 'TST', 
+	            jiraRelease: '1.1.1', jiraEnvironmentVariable: 'notes', jiraFilter: 'status in (Resolved, Closed)']) 
+	        {
+            //do some useful here
+		    //release notes can be found in environment variable jiraEnvironmentVariable
+		    print env.notes
+            }
+        }
     }
 }
 def notifyBuild(String buildStatus = 'STARTED') {
