@@ -39,8 +39,8 @@ node() {
         notifyBuild(currentBuild.result)
 		// jiraSendBuildInfo site: 'wowinc.atlassian.net'
 		node {
-            wrap([$class: 'hudson.plugins.jira.JiraCreateReleaseNotes', jiraProjectKey: 'TST', 
-	            jiraRelease: '1.1.1', jiraEnvironmentVariable: 'notes', jiraFilter: 'status in (Resolved, Closed)']) 
+            wrap([$class: 'hudson.plugins.jira.JiraCreateReleaseNotes', jiraProjectKey: 'XT', 
+	            jiraEnvironmentVariable: 'notes', jiraFilter: 'status in (Resolved, Closed)']) 
 	        {
             //do some useful here
 		    //release notes can be found in environment variable jiraEnvironmentVariable
